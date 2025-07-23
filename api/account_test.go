@@ -145,12 +145,12 @@ func TestGetAccountAPI(t *testing.T) {
 	}
 }
 
-func createRandomAccount(t *testing.T) db.Account {
-	return db.Account{
-		Owner:    util.RandomOwner(),
-		Currency: util.RandomCurrency(),
-	}
-}
+// func createRandomAccount(t *testing.T) db.Account {
+// 	return db.Account{
+// 		Owner:    util.RandomOwner(),
+// 		Currency: util.RandomCurrency(),
+// 	}
+// }
 
 func randomAccount(owner string) db.Account {
 	return db.Account{
