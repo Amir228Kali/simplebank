@@ -6,10 +6,16 @@ import (
 	"fmt"
 )
 
-// Store provides all functions to execute SQL queries and transactions
+// Store provides all functions to execute db queries and transactions
+type Store interface {
+	Querier
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
+
+// SQLStore provides all functions to execute SQL queries and transactions
 // on the database. It wraps the Queries struct to provide a clean interface.
 // // It also manages the database connection and transaction handling.
-type Store struct {
+type SQLStore struct {
 	*Queries
 	db *sql.DB
 }
@@ -19,8 +25,8 @@ type Store struct {
 // This allows the Store to execute queries and manage transactions.
 // The Store struct is designed to encapsulate all database operations.
 // It provides a clean interface for executing queries and handling transactions.
-func NewStore(db *sql.DB) *Store {
-	store := &Store{
+func NewStore(db *sql.DB) Store {
+	store := &SQLStore{
 		db:      db,
 		Queries: New(db),
 	}
@@ -30,7 +36,7 @@ func NewStore(db *sql.DB) *Store {
 // execTx executes a function within a database transaction.
 // It begins a transaction, executes the provided function with a Queries instance,
 // and commits the transaction if successful. If an error occurs, it rolls back the transaction.
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -62,7 +68,7 @@ type TransferTxResult struct {
 	ToEntry     Entry    `json:"to_entry"`
 }
 
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult
 
 	err := store.execTx(ctx, func(q *Queries) error {

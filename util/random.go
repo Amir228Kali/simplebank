@@ -38,7 +38,12 @@ func RandomMoney() int64 {
 }
 
 func RandomCurrency() string {
-	currencies := []string{"USD", "EUR", "CAD", "GBP", "JPY"}
+	currencies := []string{"USD", "EUR"}
 	n := len(currencies)
 	return currencies[rand.Intn(n)]
+}
+
+// RandomEmail generates a random email address
+func RandomEmail() string {
+	return RandomString(6) + "@" + RandomString(5) + ".com"
 }
