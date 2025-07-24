@@ -5,7 +5,7 @@ migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
 
 postgres:
-	docker run --name postgres17 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:17.5-alpine3.22
+	docker run --name postgres17 --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:17.5-alpine3.22
 
 start-postgres:
 	docker start postgres17
@@ -33,5 +33,8 @@ migratedown1:
 
 migrateup1:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up 1
+
+dockerbuild:
+	docker build -t simplebank:latest .
 
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc server test mockgen start-postgres migratedown1 migrateup1
